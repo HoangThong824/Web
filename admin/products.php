@@ -8,12 +8,17 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $message = "";
 $error = "";
 
-// --- Pagination Logic ---
+// --- Search & Pagination Logic ---
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $limit = 5; // Items per page
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
 
-$total_res = $conn->query("SELECT COUNT(*) as total FROM products");
+$count_query = "SELECT COUNT(*) as total FROM products";
+if ($search) {
+    $count_query .= " WHERE name LIKE '%" . $conn->real_escape_string($search) . "%'";
+}
+$total_res = $conn->query($count_query);
 $total_items = $total_res->fetch_assoc()['total'];
 $total_pages = ceil($total_items / $limit);
 
@@ -101,15 +106,21 @@ include("header.php");
             <span class="text-slate-600">Quản lý sản phẩm</span>
         </nav>
     </div>
-    <?php if($action == 'list'): ?>
-        <a href="products.php?action=add" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2">
-            <i class="fas fa-plus"></i> Thêm mới
-        </a>
-    <?php else: ?>
-        <a href="products.php" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2">
-            <i class="fas fa-arrow-left"></i> Danh sách
-        </a>
-    <?php endif; ?>
+    <div class="flex items-center gap-4">
+        <form method="GET" class="relative hidden sm:block">
+            <input type="text" name="search" value="<?= $search ?>" placeholder="Tìm sản phẩm..." class="bg-white pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary/20 text-sm w-64 outline-none transition-all">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+        </form>
+        <?php if($action == 'list'): ?>
+            <a href="products.php?action=add" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2">
+                <i class="fas fa-plus"></i> Thêm mới
+            </a>
+        <?php else: ?>
+            <a href="products.php" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Danh sách
+            </a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <?php if($message): ?>
@@ -127,7 +138,7 @@ include("header.php");
 <?php endif; ?>
 
 <?php if($action == 'list'): ?>
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
         <table class="w-full text-left">
             <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 text-xs uppercase tracking-wider">
                 <tr>
@@ -140,7 +151,12 @@ include("header.php");
             </thead>
             <tbody class="divide-y divide-slate-100">
                 <?php
-                $res = $conn->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC LIMIT $limit OFFSET $offset");
+                $sql = "SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id";
+                if ($search) {
+                    $sql .= " WHERE p.name LIKE '%" . $conn->real_escape_string($search) . "%'";
+                }
+                $sql .= " ORDER BY p.id DESC LIMIT $limit OFFSET $offset";
+                $res = $conn->query($sql);
                 while($row = $res->fetch_assoc()):
                 ?>
                 <tr class="hover:bg-slate-50/50 transition-all">

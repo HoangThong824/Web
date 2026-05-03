@@ -8,7 +8,15 @@ if (!isset($_GET['id'])) {
 }
 
 $id = intval($_GET['id']);
-$res = $conn->query("SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = $id");
+$query = "SELECT p.*, c.name as category_name, 
+          AVG(co.rating) as avg_rating, 
+          COUNT(co.id) as review_count 
+          FROM products p 
+          JOIN categories c ON p.category_id = c.id 
+          LEFT JOIN comments co ON p.id = co.product_id AND co.status = 'approved'
+          WHERE p.id = $id
+          GROUP BY p.id";
+$res = $conn->query($query);
 $product = $res->fetch_assoc();
 
 if (!$product) {
@@ -18,18 +26,32 @@ if (!$product) {
 
 // Handle Comment Submission
 $comment_msg = "";
+$can_review = false;
+if (isset($_SESSION['user'])) {
+    $uid = $_SESSION['user']['id'];
+    // Check if user has bought this product and order is delivered
+    $check_purchase = $conn->query("SELECT oi.id FROM order_items oi 
+                                    JOIN orders o ON oi.order_id = o.id 
+                                    WHERE o.user_id = $uid AND oi.product_id = $id AND o.status = 'delivered'");
+    if ($check_purchase->num_rows > 0) {
+        $can_review = true;
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_comment'])) {
     if (!isset($_SESSION['user'])) {
-        $comment_msg = "Bạn cần đăng nhập để bình luận!";
+        $comment_msg = "Bạn cần đăng nhập để đánh giá!";
+    } elseif (!$can_review) {
+        $comment_msg = "Bạn chỉ có thể đánh giá sản phẩm sau khi đã mua và nhận hàng thành công!";
     } else {
         $user_id = $_SESSION['user']['id'];
-        $content = $_POST['content'];
+        $content = $conn->real_escape_string($_POST['content']);
         $rating = intval($_POST['rating']);
         
-        $stmt = $conn->prepare("INSERT INTO comments (user_id, product_id, content, rating) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO comments (user_id, product_id, content, rating, status) VALUES (?, ?, ?, ?, 'approved')");
         $stmt->bind_param("iisi", $user_id, $id, $content, $rating);
         if ($stmt->execute()) {
-            $comment_msg = "Bình luận của bạn đã được gửi và đang chờ duyệt!";
+            $comment_msg = "Cảm ơn bạn đã đánh giá sản phẩm!";
         }
     }
 }
@@ -52,8 +74,12 @@ include("includes/header.php");
         <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
             <div class="flex flex-col lg:flex-row">
                 <!-- Product Image -->
-                <div class="lg:w-1/2 bg-slate-100 flex items-center justify-center p-12 text-slate-300 text-9xl">
-                    <i class="fas fa-fish"></i>
+                <div class="lg:w-1/2 bg-slate-50 flex items-center justify-center p-8 md:p-12 text-slate-300 text-9xl overflow-hidden">
+                    <?php if($product['image'] && file_exists("uploads/".$product['image'])): ?>
+                        <img src="uploads/<?= $product['image'] ?>" class="w-full h-full object-contain hover:scale-105 transition-transform duration-700">
+                    <?php else: ?>
+                        <i class="fas fa-fish"></i>
+<?php endif; ?>
                 </div>
                 
                 <!-- Product Info -->
@@ -61,18 +87,21 @@ include("includes/header.php");
                     <span class="text-primary font-bold uppercase tracking-widest text-sm mb-4 block"><?= $product['category_name'] ?></span>
                     <h1 class="text-4xl md:text-5xl font-bold text-secondary mb-6"><?= $product['name'] ?></h1>
                     
-                    <div class="flex items-center gap-4 mb-8">
-                        <span class="text-3xl font-bold text-primary"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
-                        <div class="h-6 w-px bg-slate-200"></div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <?php 
+                            $rating = round($product['avg_rating'] ?: 0);
+                            $review_count = $product['review_count'];
+                        ?>
                         <div class="flex items-center gap-1 text-orange-400">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <span class="text-slate-400 text-sm ml-2">(12 đánh giá)</span>
+                            <?php for($i=1; $i<=5; $i++): ?>
+                                <i class="<?= $i <= $rating ? 'fas' : 'far' ?> fa-star"></i>
+                            <?php endfor; ?>
                         </div>
+                        <span class="text-slate-400 text-sm">(<?= $review_count ?> đánh giá)</span>
+                        <span class="text-green-500 text-sm font-bold ml-4"><i class="fas fa-check-circle"></i> Còn hàng</span>
                     </div>
+
+                    <div class="text-3xl font-bold text-primary mb-8"><?php echo number_format($product['price'], 0, ',', '.'); ?>đ <span class="text-lg text-slate-400 font-normal">/ 500g</span></div>
 
                     <p class="text-slate-600 text-lg mb-10 leading-relaxed">
                         <?= nl2br($product['description']) ?>
@@ -108,7 +137,7 @@ include("includes/header.php");
         </div>
 
         <!-- Comments Section -->
-        <div class="mt-16 max-w-4xl">
+        <div id="reviews" class="mt-16 max-w-4xl">
             <h2 class="text-3xl font-bold text-secondary mb-10">Đánh giá sản phẩm</h2>
             
             <!-- Comment Form -->
@@ -119,24 +148,59 @@ include("includes/header.php");
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" class="space-y-6">
-                    <div class="flex items-center gap-4 mb-4">
-                        <span class="font-bold text-secondary">Đánh giá của bạn:</span>
-                        <div class="flex gap-2">
-                            <select name="rating" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1 outline-none focus:border-primary">
-                                <option value="5">5 Sao (Rất tốt)</option>
-                                <option value="4">4 Sao</option>
-                                <option value="3">3 Sao</option>
-                                <option value="2">2 Sao</option>
-                                <option value="1">1 Sao</option>
-                            </select>
-                        </div>
+                <?php if(!isset($_SESSION['user'])): ?>
+                    <div class="text-center py-6">
+                        <p class="text-slate-500 mb-4">Bạn cần đăng nhập để đánh giá sản phẩm này.</p>
+                        <a href="login.php" class="bg-primary text-white px-6 py-2 rounded-lg font-bold">Đăng nhập ngay</a>
                     </div>
-                    <textarea name="content" rows="4" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-primary transition-all" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
-                    <button type="submit" name="submit_comment" class="bg-secondary hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-bold transition-all">
-                        Gửi đánh giá
-                    </button>
-                </form>
+                <?php elseif(!$can_review): ?>
+                    <div class="flex items-center gap-4 text-orange-600 bg-orange-50 p-4 rounded-xl border border-orange-100">
+                        <i class="fas fa-info-circle text-xl"></i>
+                        <p class="text-sm font-medium">Bạn chưa mua sản phẩm này hoặc đơn hàng chưa hoàn tất. Chỉ những khách hàng đã mua mới có thể đánh giá.</p>
+                    </div>
+                <?php else: ?>
+                    <form method="POST" class="space-y-6">
+                        <div class="flex items-center gap-6 mb-4">
+                            <span class="font-bold text-secondary">Chọn mức độ hài lòng:</span>
+                            <div class="flex gap-2 text-2xl text-slate-300 cursor-pointer" id="star-rating">
+                                <i class="fas fa-star hover:text-orange-400 transition-colors" data-value="1"></i>
+                                <i class="fas fa-star hover:text-orange-400 transition-colors" data-value="2"></i>
+                                <i class="fas fa-star hover:text-orange-400 transition-colors" data-value="3"></i>
+                                <i class="fas fa-star hover:text-orange-400 transition-colors" data-value="4"></i>
+                                <i class="fas fa-star hover:text-orange-400 transition-colors" data-value="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="rating-input" value="5">
+                        </div>
+                        <textarea name="content" rows="4" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-primary transition-all" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
+                        <button type="submit" name="submit_comment" class="bg-secondary hover:bg-slate-800 text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg shadow-secondary/20">
+                            Gửi đánh giá ngay
+                        </button>
+                    </form>
+                    
+                    <script>
+                    const stars = document.querySelectorAll('#star-rating i');
+                    const input = document.getElementById('rating-input');
+                    
+                    stars.forEach(star => {
+                        star.addEventListener('click', () => {
+                            const val = star.getAttribute('data-value');
+                            input.value = val;
+                            
+                            stars.forEach(s => {
+                                if (s.getAttribute('data-value') <= val) {
+                                    s.classList.remove('text-slate-300');
+                                    s.classList.add('text-orange-400');
+                                } else {
+                                    s.classList.remove('text-orange-400');
+                                    s.classList.add('text-slate-300');
+                                }
+                            });
+                        });
+                    });
+                    // Set default 5 stars
+                    document.querySelector('#star-rating i[data-value="5"]').click();
+                    </script>
+                <?php endif; ?>
             </div>
 
             <!-- Comment List -->

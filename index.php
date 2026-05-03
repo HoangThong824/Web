@@ -54,23 +54,45 @@ include("includes/header.php");
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <?php
-            $result = $conn->query("SELECT p.*, c.name as category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE is_featured = 1 LIMIT 4");
+            $query = "SELECT p.*, c.name as category_name, 
+                      AVG(co.rating) as avg_rating, 
+                      COUNT(co.id) as review_count 
+                      FROM products p 
+                      JOIN categories c ON p.category_id = c.id 
+                      LEFT JOIN comments co ON p.id = co.product_id AND co.status = 'approved'
+                      WHERE p.is_featured = 1 
+                      GROUP BY p.id 
+                      LIMIT 4";
+            $result = $conn->query($query);
             if ($result && $result->num_rows > 0):
                 while($row = $result->fetch_assoc()):
+                    $rating = round($row['avg_rating'] ?: 0);
+                    $review_count = $row['review_count'];
             ?>
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all group overflow-hidden border border-slate-100">
-                    <div class="h-64 bg-slate-200 relative overflow-hidden flex items-center justify-center text-slate-400 text-4xl">
-                        <!-- Placeholder for Product Image -->
-                        <i class="fas fa-fish group-hover:scale-125 transition-transform duration-500"></i>
+                    <a href="product_detail.php?id=<?php echo $row['id']; ?>" class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center text-slate-400 text-4xl block">
+                        <?php if($row['image'] && file_exists("uploads/".$row['image'])): ?>
+                            <img src="uploads/<?= $row['image'] ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <?php else: ?>
+                            <i class="fas fa-fish group-hover:scale-125 transition-transform duration-500"></i>
+                        <?php endif; ?>
                         <div class="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
                             HOT
                         </div>
-                    </div>
+                    </a>
                     <div class="p-6">
                         <span class="text-primary text-xs font-bold uppercase tracking-wider mb-2 block"><?php echo $row['category_name']; ?></span>
-                        <h3 class="text-xl font-bold text-secondary mb-3"><?php echo $row['name']; ?></h3>
+                        <a href="product_detail.php?id=<?php echo $row['id']; ?>">
+                            <h3 class="text-lg font-bold text-secondary mb-1 hover:text-primary transition-colors"><?php echo $row['name']; ?></h3>
+                        </a>
+                        <div class="flex items-center gap-1 text-orange-400 text-xs mb-3">
+                            <?php for($i=1; $i<=5; $i++): ?>
+                                <i class="<?= $i <= $rating ? 'fas' : 'far' ?> fa-star"></i>
+                            <?php endfor; ?>
+                            <span class="text-slate-400 ml-1">(<?php echo $review_count; ?>)</span>
+                        </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-primary"><?php echo number_format($row['price'], 0, ',', '.'); ?>đ</span>
+                            <span class="text-xl font-bold text-primary"><?php echo number_format($row['price'], 0, ',', '.'); ?>đ <span class="text-[10px] text-slate-400 font-normal">/ 500g</span></span>
                             <button class="bg-slate-100 hover:bg-primary hover:text-white text-secondary w-10 h-10 rounded-full transition-all">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>

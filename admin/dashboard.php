@@ -11,6 +11,8 @@ $unreadContacts = $conn->query("SELECT COUNT(*) as total FROM contacts WHERE sta
 $totalProducts = $conn->query("SELECT COUNT(*) as total FROM products")->fetch_assoc()['total'];
 $totalUsers = $conn->query("SELECT COUNT(*) as total FROM users WHERE role='user'")->fetch_assoc()['total'];
 $totalNews = $conn->query("SELECT COUNT(*) as total FROM news")->fetch_assoc()['total'];
+$totalOrders = $conn->query("SELECT COUNT(*) as total FROM orders")->fetch_assoc()['total'];
+$pendingOrders = $conn->query("SELECT COUNT(*) as total FROM orders WHERE status='pending'")->fetch_assoc()['total'];
 ?>
 
 <div class="mb-8">
@@ -32,6 +34,16 @@ $totalNews = $conn->query("SELECT COUNT(*) as total FROM news")->fetch_assoc()['
     <!-- Stat Card -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-6">
         <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 text-2xl">
+            <i class="fas fa-shopping-basket"></i>
+        </div>
+        <div>
+            <span class="text-slate-500 text-sm font-medium">Đơn hàng mới</span>
+            <h3 class="text-2xl font-bold text-secondary"><?= $pendingOrders ?></h3>
+        </div>
+    </div>
+    <!-- Stat Card -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-6">
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 text-2xl">
             <i class="fas fa-envelope"></i>
         </div>
         <div>
@@ -52,11 +64,11 @@ $totalNews = $conn->query("SELECT COUNT(*) as total FROM news")->fetch_assoc()['
     <!-- Stat Card -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-6">
         <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 text-2xl">
-            <i class="fas fa-newspaper"></i>
+            <i class="fas fa-box"></i>
         </div>
         <div>
-            <span class="text-slate-500 text-sm font-medium">Bài viết</span>
-            <h3 class="text-2xl font-bold text-secondary"><?= $totalNews ?></h3>
+            <span class="text-slate-500 text-sm font-medium">Tổng sản phẩm</span>
+            <h3 class="text-2xl font-bold text-secondary"><?= $totalProducts ?></h3>
         </div>
     </div>
 </div>

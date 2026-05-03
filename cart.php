@@ -51,8 +51,12 @@ include("includes/header.php");
                                     <tr class="hover:bg-slate-50/50 transition-all">
                                         <td class="px-8 py-6">
                                             <div class="flex items-center gap-4">
-                                                <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
-                                                    <i class="fas fa-fish"></i>
+                                                <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-100">
+                                                    <?php if(isset($item['image']) && file_exists("uploads/".$item['image'])): ?>
+                                                        <img src="uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
+                                                    <?php else: ?>
+                                                        <i class="fas fa-fish"></i>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <span class="font-bold text-secondary"><?= $item['name'] ?></span>
                                             </div>
@@ -102,9 +106,9 @@ include("includes/header.php");
                             </div>
                         </div>
                         
-                        <button class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 mb-4">
+                        <a href="checkout.php" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 mb-4 flex items-center justify-center">
                             Tiến hành thanh toán
-                        </button>
+                        </a>
                         <p class="text-center text-xs text-slate-400">Đảm bảo an toàn 100% với các phương thức thanh toán phổ biến.</p>
                     </div>
                 </div>
