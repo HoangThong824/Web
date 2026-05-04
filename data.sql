@@ -102,6 +102,10 @@ CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     total_amount DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) DEFAULT 'cod',
+    shipping_name VARCHAR(255),
+    shipping_phone VARCHAR(20),
+    shipping_address TEXT,
     status ENUM('pending','processing','shipped','delivered','cancelled') DEFAULT 'pending',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
@@ -133,12 +137,18 @@ INSERT INTO settings (`key`, `value`) VALUES
 INSERT INTO categories (name, description) VALUES
 ('Khô Cá', 'Các loại khô cá biển, cá đồng phơi khô tự nhiên.'),
 ('Khô Mực', 'Mực khô, mực một nắng chất lượng cao.'),
-('Khô Thịt', 'Khô bò, khô gà lá chanh, khô heo cháy tỏi.');
+('Khô Thịt', 'Khô bò, khô gà lá chanh, khô heo cháy tỏi.'),
+('Khô Hải Sản', 'Tôm khô, mực khô và các loại hải sản đặc sản.'),
+('Combo Quà Tặng', 'Các gói sản phẩm kết hợp, thích hợp làm quà biếu.');
 
-INSERT INTO products (category_id, name, price, description, is_featured) VALUES
-(1, 'Khô Cá Lóc Đồng', 250000, 'Khô cá lóc đồng chính gốc miền Tây, thịt thơm ngọt.', TRUE),
-(2, 'Mực Khô Loại 1', 850000, 'Mực khô Phan Thiết size lớn, thịt dày, ngọt.', TRUE),
-(3, 'Khô Gà Lá Chanh', 150000, 'Khô gà giòn cay, thơm mùi lá chanh.', TRUE);
+INSERT INTO products (category_id, name, price, description, is_featured, image) VALUES
+(1, 'Khô Cá Lóc Đồng', 250000, 'Khô cá lóc đồng chính gốc miền Tây, thịt thơm ngọt, dai ngon tự nhiên.', TRUE, 'khô cá lóc.png'),
+(1, 'Khô Cá Đuối', 280000, 'Khô cá đuối đen thơm nồng, thích hợp nướng chấm mắm me.', FALSE, 'khô cá đuối.png'),
+(2, 'Mực Khô Loại 1', 850000, 'Mực khô Phan Thiết size lớn, thịt dày, ngọt lịm, nướng lên cực thơm.', TRUE, 'khô mực.png'),
+(3, 'Khô Gà Lá Chanh', 150000, 'Khô gà xé cay giòn rụm, thơm nồng mùi lá chanh tươi.', TRUE, 'khô gà.png'),
+(3, 'Khô Bò Sợi', 450000, 'Khô bò sợi cao cấp, tẩm ướp gia vị đậm đà, cay cay ngọt ngọt.', FALSE, 'khô bò.png'),
+(4, 'Tôm Khô Đất', 650000, 'Tôm khô đất Cà Mau chính gốc, màu đỏ tự nhiên, vị ngọt thanh.', TRUE, 'tôm khô.png'),
+(5, 'Combo Tiết Kiệm', 1200000, 'Sự kết hợp hoàn hảo của các loại khô bán chạy nhất, tiết kiệm hơn khi mua lẻ.', TRUE, 'combo.png');
 
 INSERT INTO news (title, content) VALUES
 ('Cách chọn mực khô ngon', 'Làm sao để phân biệt mực khô chất lượng và mực giả? Hãy cùng tìm hiểu về độ dày của thịt, màu sắc và mùi thơm đặc trưng của mực thật...'),

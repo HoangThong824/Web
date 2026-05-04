@@ -4,6 +4,17 @@ include("includes/db.php");
 
 $category_id = isset($_GET['category']) ? $_GET['category'] : '';
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'latest';
+
+// Define sorting logic
+$order_by = "p.id DESC"; // Default
+if ($sort == 'price_asc') {
+    $order_by = "p.price ASC";
+} elseif ($sort == 'price_desc') {
+    $order_by = "p.price DESC";
+} elseif ($sort == 'name_asc') {
+    $order_by = "p.name ASC";
+}
 
 $query = "SELECT p.*, c.name as category_name, 
           AVG(co.rating) as avg_rating, 
@@ -18,7 +29,7 @@ if ($category_id) {
 if ($search) {
     $query .= " AND (p.name LIKE '%" . $conn->real_escape_string($search) . "%' OR p.description LIKE '%" . $conn->real_escape_string($search) . "%')";
 }
-$query .= " GROUP BY p.id ORDER BY p.id DESC";
+$query .= " GROUP BY p.id ORDER BY $order_by";
 
 $products = $conn->query($query);
 if (!$products) {
@@ -29,11 +40,18 @@ $page_title = "Sản phẩm";
 include("includes/header.php");
 ?>
 
+<!-- Shop Hero Banner -->
+<div class="relative w-full overflow-hidden mt-6">
+    <img src="image/banner.png" alt="Banner" class="w-full h-auto block">
+    <!-- Fade-out Gradient Overlay -->
+    <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-slate-50 to-transparent"></div>
+</div>
+
 <!-- Shop Header -->
-<section class="bg-secondary py-16 text-white text-center">
+<section class="py-12 text-center">
     <div class="container mx-auto px-4">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Danh mục sản phẩm</h1>
-        <p class="text-slate-300">Khám phá các loại khô đặc sản tinh hoa từ mọi vùng miền.</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-secondary mb-2">Danh mục sản phẩm</h1>
+        <p class="text-slate-500">Khám phá các loại khô đặc sản tinh hoa từ mọi vùng miền.</p>
     </div>
 </section>
 
@@ -90,11 +108,20 @@ include("includes/header.php");
                     <p class="text-slate-500">Hiển thị <span class="font-bold text-secondary"><?= $products->num_rows ?></span> sản phẩm</p>
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-slate-500">Sắp xếp:</span>
-                        <select class="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm outline-none">
-                            <option>Mới nhất</option>
-                            <option>Giá tăng dần</option>
-                            <option>Giá giảm dần</option>
+                        <select id="sort-select" class="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm outline-none cursor-pointer hover:border-primary transition-all">
+                            <option value="latest" <?= $sort == 'latest' ? 'selected' : '' ?>>Mới nhất</option>
+                            <option value="price_asc" <?= $sort == 'price_asc' ? 'selected' : '' ?>>Giá tăng dần</option>
+                            <option value="price_desc" <?= $sort == 'price_desc' ? 'selected' : '' ?>>Giá giảm dần</option>
+                            <option value="name_asc" <?= $sort == 'name_asc' ? 'selected' : '' ?>>Tên A-Z</option>
                         </select>
+
+                        <script>
+                        document.getElementById('sort-select').addEventListener('change', function() {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('sort', this.value);
+                            window.location.href = url.href;
+                        });
+                        </script>
                     </div>
                 </div>
 
@@ -127,9 +154,9 @@ include("includes/header.php");
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-xl font-bold text-primary"><?= number_format($row['price'], 0, ',', '.') ?>đ <span class="text-[10px] text-slate-400 font-normal">/ 500g</span></span>
-                                        <a href="add_to_cart.php?id=<?= $row['id'] ?>" class="bg-slate-50 hover:bg-primary hover:text-white text-secondary w-10 h-10 rounded-xl transition-all border border-slate-100 flex items-center justify-center">
+                                        <button onclick="addToCart(<?= $row['id'] ?>)" class="bg-slate-50 hover:bg-primary hover:text-white text-secondary w-10 h-10 rounded-xl transition-all border border-slate-100 flex items-center justify-center">
                                             <i class="fas fa-cart-plus"></i>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

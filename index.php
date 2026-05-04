@@ -93,7 +93,7 @@ include("includes/header.php");
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-xl font-bold text-primary"><?php echo number_format($row['price'], 0, ',', '.'); ?>đ <span class="text-[10px] text-slate-400 font-normal">/ 500g</span></span>
-                            <button class="bg-slate-100 hover:bg-primary hover:text-white text-secondary w-10 h-10 rounded-full transition-all">
+                            <button onclick="addToCart(<?= $row['id'] ?>)" class="bg-slate-100 hover:bg-primary hover:text-white text-secondary w-10 h-10 rounded-full transition-all">
                                 <i class="fas fa-shopping-cart"></i>
                             </button>
                         </div>

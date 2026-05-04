@@ -1,29 +1,29 @@
 </main>
 
-<footer class="bg-secondary text-white pt-16 pb-8">
+<footer class="bg-secondary text-stone-200 pt-20 pb-10 border-t border-primary/20">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div>
-                <h4 class="text-xl font-bold mb-6">Về chúng tôi</h4>
-                <p class="text-slate-300">Khô Đặc Sản chuyên cung cấp các loại đồ khô vùng miền, đảm bảo vệ sinh an toàn
-                    thực phẩm và hương vị truyền thống.</p>
+                <h4 class="text-xl font-bold mb-6 text-white">Về chúng tôi</h4>
+                <p class="text-stone-400 leading-relaxed">Khô Đặc Sản chuyên cung cấp các loại đồ khô vùng miền, đảm bảo vệ sinh an toàn
+                    thực phẩm và hương vị truyền thống tinh túy.</p>
             </div>
             <div>
-                <h4 class="text-xl font-bold mb-6">Liên kết</h4>
-                <ul class="space-y-4 text-slate-300">
+                <h4 class="text-xl font-bold mb-6 text-white">Liên kết</h4>
+                <ul class="space-y-4 text-stone-400">
                     <li><a href="index.php"
-                            class="hover:text-white hover:translate-x-1 inline-block transition-all">Trang chủ</a></li>
+                            class="hover:text-primary hover:translate-x-1 inline-block transition-all">Trang chủ</a></li>
                     <li><a href="products.php"
-                            class="hover:text-white hover:translate-x-1 inline-block transition-all">Sản phẩm</a></li>
-                    <li><a href="news.php" class="hover:text-white hover:translate-x-1 inline-block transition-all">Tin
+                            class="hover:text-primary hover:translate-x-1 inline-block transition-all">Sản phẩm</a></li>
+                    <li><a href="news.php" class="hover:text-primary hover:translate-x-1 inline-block transition-all">Tin
                             tức</a></li>
                     <li><a href="contact.php"
-                            class="hover:text-white hover:translate-x-1 inline-block transition-all">Liên hệ</a></li>
+                            class="hover:text-primary hover:translate-x-1 inline-block transition-all">Liên hệ</a></li>
                 </ul>
             </div>
             <div>
-                <h4 class="text-xl font-bold mb-6">Thông tin liên hệ</h4>
-                <ul class="space-y-4 text-slate-300">
+                <h4 class="text-xl font-bold mb-6 text-white">Thông tin liên hệ</h4>
+                <ul class="space-y-4 text-stone-400">
                     <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 text-primary"></i> 123 Đường
                         ABC, Quận 1, TP. HCM</li>
                     <li class="flex items-center gap-3"><i class="fas fa-phone text-primary"></i> 0988 123 456</li>
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="border-t border-slate-700 pt-8 text-center text-slate-400 text-sm">
+        <div class="border-t border-white/5 pt-8 text-center text-stone-500 text-sm">
             <p>&copy; 2026 Khô Đặc Sản. Tất cả quyền được bảo lưu. Thiết kế bởi Team.</p>
         </div>
     </div>

@@ -60,7 +60,14 @@ $page_title = $product['name'];
 include("includes/header.php");
 ?>
 
-<section class="py-12 bg-slate-50">
+<!-- Product Detail Hero Banner -->
+<div class="relative w-full overflow-hidden mt-6">
+    <img src="image/banner.png" alt="Banner" class="w-full h-auto block">
+    <!-- Fade-out Gradient Overlay -->
+    <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-slate-50 to-transparent"></div>
+</div>
+
+<section class="pb-12 pt-8 bg-slate-50">
     <div class="container mx-auto px-4">
         <!-- Breadcrumb -->
         <nav class="flex text-sm text-slate-500 mb-8">
@@ -107,14 +114,34 @@ include("includes/header.php");
                         <?= nl2br($product['description']) ?>
                     </p>
 
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="add_to_cart.php?id=<?= $product['id'] ?>" class="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 flex-1 flex items-center justify-center gap-3">
-                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
-                        </a>
-                        <button class="bg-slate-100 hover:bg-slate-200 text-secondary px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3">
-                            <i class="fas fa-heart"></i> Yêu thích
-                        </button>
+                    <div class="flex flex-col gap-6 mb-10">
+                        <div class="flex items-center gap-6">
+                            <span class="font-bold text-secondary">Số lượng:</span>
+                            <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white">
+                                <button type="button" onclick="changeQty(-1)" class="px-4 py-2 hover:bg-slate-50 transition-all border-r border-slate-200"><i class="fas fa-minus text-xs text-slate-400"></i></button>
+                                <input type="number" id="buy-qty" value="1" min="1" class="w-16 text-center font-bold text-secondary outline-none py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button type="button" onclick="changeQty(1)" class="px-4 py-2 hover:bg-slate-50 transition-all border-l border-slate-200"><i class="fas fa-plus text-xs text-slate-400"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="javascript:void(0)" onclick="addToCart(<?= $product['id'] ?>, document.getElementById('buy-qty').value)" class="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 flex-1 flex items-center justify-center gap-3">
+                                <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                            </a>
+                            <button class="bg-slate-100 hover:bg-slate-200 text-secondary px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-heart"></i> Yêu thích
+                            </button>
+                        </div>
                     </div>
+
+                    <script>
+                    function changeQty(amt) {
+                        const input = document.getElementById('buy-qty');
+                        let val = parseInt(input.value) + amt;
+                        if (val < 1) val = 1;
+                        input.value = val;
+                    }
+                    </script>
 
                     <div class="mt-12 pt-12 border-t border-slate-100 grid grid-cols-2 gap-8">
                         <div class="flex items-center gap-4">

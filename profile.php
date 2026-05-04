@@ -8,6 +8,47 @@ if (!isset($_SESSION['user'])) {
 }
 
 $user_id = $_SESSION['user']['id'];
+$msg = "";
+$msg_type = "";
+
+// Handle Profile Update
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
+    $fullname = $conn->real_escape_string($_POST['fullname']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $phone = $conn->real_escape_string($_POST['phone']);
+    
+    // Handle Avatar Upload
+    $avatar_name = $_SESSION['user']['avatar'];
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) {
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        $filename = $_FILES['avatar']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if (in_array($ext, $allowed)) {
+            $new_name = "avatar_" . $user_id . "_" . time() . "." . $ext;
+            if (move_uploaded_file($_FILES['avatar']['tmp_name'], "uploads/" . $new_name)) {
+                $avatar_name = $new_name;
+            }
+        }
+    }
+    
+    $update_query = "UPDATE users SET fullname = ?, email = ?, phone = ?, avatar = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("ssssi", $fullname, $email, $phone, $avatar_name, $user_id);
+    
+    if ($stmt->execute()) {
+        $msg = "Cập nhật thông tin thành công!";
+        $msg_type = "success";
+        
+        // Refresh session data
+        $res = $conn->query("SELECT * FROM users WHERE id = $user_id");
+        $_SESSION['user'] = $res->fetch_assoc();
+    } else {
+        $msg = "Có lỗi xảy ra, vui lòng thử lại!";
+        $msg_type = "error";
+    }
+}
+
 $page_title = "Cá nhân";
 include("includes/header.php");
 ?>
@@ -17,16 +58,27 @@ include("includes/header.php");
         <div class="flex flex-col lg:flex-row gap-12">
             <!-- Sidebar -->
             <div class="lg:w-1/3">
-                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-center">
-                    <div class="w-24 h-24 bg-primary rounded-full mx-auto mb-6 flex items-center justify-center text-white text-4xl font-bold">
-                        <?= strtoupper(substr($_SESSION['user']['username'], 0, 1)) ?>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 text-center sticky top-24">
+                    <div class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white shadow-xl flex items-center justify-center bg-primary text-white text-5xl font-bold overflow-hidden relative group">
+                        <?php 
+                        $user = $_SESSION['user'];
+                        $avatar_path = "uploads/" . ($user['avatar'] ?? '');
+                        $has_avatar = !empty($user['avatar']) && $user['avatar'] != 'default_avatar.png' && file_exists($avatar_path);
+                        if ($has_avatar): ?>
+                            <img src="<?= $avatar_path ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <?= strtoupper(substr($user['username'], 0, 1)) ?>
+                        <?php endif; ?>
                     </div>
-                    <h2 class="text-2xl font-bold text-secondary"><?= $_SESSION['user']['fullname'] ?: $_SESSION['user']['username'] ?></h2>
-                    <p class="text-slate-400 mb-8">@<?= $_SESSION['user']['username'] ?></p>
+                    <h2 class="text-2xl font-bold text-secondary"><?= $user['fullname'] ?: $user['username'] ?></h2>
+                    <p class="text-stone-400 mb-8">@<?= $user['username'] ?></p>
                     
                     <div class="space-y-2 text-left">
-                        <a href="profile.php" class="flex items-center gap-4 p-4 rounded-xl bg-primary text-white font-bold transition-all">
+                        <a href="#orders" class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 text-stone-600 font-bold transition-all">
                             <i class="fas fa-shopping-bag w-6"></i> Đơn hàng của tôi
+                        </a>
+                        <a href="#settings" class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 text-stone-600 font-bold transition-all">
+                            <i class="fas fa-user-cog w-6"></i> Cài đặt tài khoản
                         </a>
                         <a href="logout.php" class="flex items-center gap-4 p-4 rounded-xl text-red-500 hover:bg-red-50 font-bold transition-all">
                             <i class="fas fa-sign-out-alt w-6"></i> Đăng xuất
@@ -36,8 +88,82 @@ include("includes/header.php");
             </div>
 
             <!-- Content -->
-            <div class="lg:w-2/3">
-                <h3 class="text-3xl font-bold text-secondary mb-8">Lịch sử mua hàng</h3>
+            <div class="lg:w-2/3 space-y-12">
+                <!-- Message -->
+                <?php if($msg): ?>
+                    <div class="<?= $msg_type == 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600' ?> p-4 rounded-2xl font-bold border <?= $msg_type == 'success' ? 'border-green-100' : 'border-red-100' ?>">
+                        <i class="fas <?= $msg_type == 'success' ? 'fa-check-circle' : 'fa-exclamation-circle' ?> mr-2"></i>
+                        <?= $msg ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Settings Section -->
+                <section id="settings" class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="text-2xl font-bold text-secondary mb-8 flex items-center gap-3">
+                        <i class="fas fa-user-edit text-primary"></i> Cài đặt tài khoản
+                    </h3>
+                    
+                    <form action="profile.php" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="md:col-span-2 flex flex-col items-center mb-4">
+                            <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-stone-100 mb-4 bg-stone-50 flex items-center justify-center text-stone-300">
+                                <?php if ($has_avatar): ?>
+                                    <img src="<?= $avatar_path ?>" class="w-full h-full object-cover" id="preview-avatar">
+                                <?php else: ?>
+                                    <i class="fas fa-user text-4xl" id="placeholder-icon"></i>
+                                <?php endif; ?>
+                            </div>
+                            <label class="cursor-pointer bg-stone-100 hover:bg-stone-200 text-stone-600 px-4 py-2 rounded-lg text-xs font-bold transition-all">
+                                <span>Thay đổi ảnh đại diện</span>
+                                <input type="file" name="avatar" class="hidden" onchange="previewImage(this)">
+                            </label>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-stone-600 ml-1">Họ và tên</label>
+                            <input type="text" name="fullname" value="<?= $user['fullname'] ?>" class="w-full px-5 py-3 rounded-xl border border-stone-200 focus:border-primary outline-none transition-all" placeholder="Nhập họ tên...">
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-stone-600 ml-1">Số điện thoại</label>
+                            <input type="text" name="phone" value="<?= $user['phone'] ?>" class="w-full px-5 py-3 rounded-xl border border-stone-200 focus:border-primary outline-none transition-all" placeholder="Nhập số điện thoại...">
+                        </div>
+
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-sm font-bold text-stone-600 ml-1">Email</label>
+                            <input type="email" name="email" value="<?= $user['email'] ?>" class="w-full px-5 py-3 rounded-xl border border-stone-200 focus:border-primary outline-none transition-all" placeholder="Nhập địa chỉ email...">
+                        </div>
+
+                        <div class="md:col-span-2 pt-4">
+                            <button type="submit" name="update_profile" class="bg-secondary hover:bg-stone-800 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-secondary/20 w-full md:w-auto">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <script>
+                function previewImage(input) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            let preview = document.getElementById('preview-avatar');
+                            if (!preview) {
+                                let container = document.getElementById('placeholder-icon').parentElement;
+                                container.innerHTML = '<img id="preview-avatar" class="w-full h-full object-cover">';
+                                preview = document.getElementById('preview-avatar');
+                            }
+                            preview.src = e.target.result;
+                        }
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+                </script>
+
+                <!-- Order History Section -->
+                <div id="orders">
+                    <h3 class="text-2xl font-bold text-secondary mb-8 flex items-center gap-3">
+                        <i class="fas fa-history text-primary"></i> Lịch sử mua hàng
+                    </h3>
                 
                 <div class="space-y-6">
                     <?php

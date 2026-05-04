@@ -8,6 +8,14 @@ if (isset($_GET['action'])) {
         unset($_SESSION['cart'][$_GET['id']]);
     } elseif ($_GET['action'] == 'clear') {
         unset($_SESSION['cart']);
+    } elseif ($_GET['action'] == 'update' && isset($_GET['id']) && isset($_GET['qty'])) {
+        $id = $_GET['id'];
+        $qty = intval($_GET['qty']);
+        if ($qty < 1) {
+            unset($_SESSION['cart'][$id]);
+        } else {
+            $_SESSION['cart'][$id]['qty'] = $qty;
+        }
     }
     header("Location: cart.php");
     exit();
@@ -63,8 +71,10 @@ include("includes/header.php");
                                         </td>
                                         <td class="px-8 py-6 text-slate-600 font-medium"><?= number_format($item['price'], 0, ',', '.') ?>đ</td>
                                         <td class="px-8 py-6">
-                                            <div class="flex items-center gap-3">
-                                                <span class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg font-bold text-secondary"><?= $item['qty'] ?></span>
+                                            <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden w-fit bg-white">
+                                                <button type="button" onclick="updateQty(<?= $id ?>, -1)" class="px-3 py-1 hover:bg-slate-50 border-r border-slate-200"><i class="fas fa-minus text-[10px] text-slate-400"></i></button>
+                                                <span class="w-10 text-center font-bold text-secondary text-sm"><?= $item['qty'] ?></span>
+                                                <button type="button" onclick="updateQty(<?= $id ?>, 1)" class="px-3 py-1 hover:bg-slate-50 border-l border-slate-200"><i class="fas fa-plus text-[10px] text-slate-400"></i></button>
                                             </div>
                                         </td>
                                         <td class="px-8 py-6 font-bold text-primary"><?= number_format($subtotal, 0, ',', '.') ?>đ</td>
@@ -125,5 +135,16 @@ include("includes/header.php");
         <?php endif; ?>
     </div>
 </section>
+
+<script>
+function updateQty(id, amt) {
+    // Current qty is known in the loop but we need it here. 
+    // For simplicity, we just redirect and let PHP handle it.
+    // In a real app, we'd use AJAX.
+    const items = <?= json_encode($_SESSION['cart']) ?>;
+    let newQty = items[id].qty + amt;
+    window.location.href = `cart.php?action=update&id=${id}&qty=${newQty}`;
+}
+</script>
 
 <?php include("includes/footer.php"); ?>
