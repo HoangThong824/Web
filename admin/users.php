@@ -11,9 +11,17 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = $_GET['id'];
     if ($_GET['action'] == 'delete') {
         $conn->query("DELETE FROM users WHERE id=$id AND role != 'admin'");
-        $message = "Đã xóa người dùng.";
     }
 }
+
+// --- Pagination Logic ---
+$limit = 10;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($page - 1) * $limit;
+
+$total_res = $conn->query("SELECT COUNT(*) as total FROM users");
+$total_items = $total_res->fetch_assoc()['total'];
+$total_pages = ceil($total_items / $limit);
 
 include("header.php");
 ?>
@@ -43,7 +51,7 @@ include("header.php");
         </thead>
         <tbody class="divide-y divide-slate-100">
             <?php
-            $res = $conn->query("SELECT * FROM users ORDER BY role ASC, id DESC");
+            $res = $conn->query("SELECT * FROM users ORDER BY role ASC, id DESC LIMIT $limit OFFSET $offset");
             while($row = $res->fetch_assoc()):
             ?>
             <tr class="hover:bg-slate-50/50 transition-all">
@@ -85,6 +93,28 @@ include("header.php");
             <?php endwhile; ?>
         </tbody>
     </table>
+    
+    <!-- Pagination Area -->
+    <?php if($total_pages > 1): ?>
+    <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+        <span class="text-sm text-slate-500">Hiển thị trang <?= $page ?> / <?= $total_pages ?></span>
+        <div class="flex gap-2">
+            <?php if($page > 1): ?>
+                <a href="users.php?page=<?= $page-1 ?>" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-primary hover:text-white transition-all">Trước</a>
+            <?php endif; ?>
+            
+            <?php for($i=1; $i<=$total_pages; $i++): ?>
+                <a href="users.php?page=<?= $i ?>" class="w-10 h-10 flex items-center justify-center rounded-lg text-sm transition-all <?= $i == $page ? 'bg-primary text-white font-bold' : 'bg-white border border-slate-200 hover:bg-slate-50' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <?php if($page < $total_pages): ?>
+                <a href="users.php?page=<?= $page+1 ?>" class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-primary hover:text-white transition-all">Tiếp</a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php include("footer.php"); ?>

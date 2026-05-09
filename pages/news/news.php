@@ -1,14 +1,26 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = 6;
+$offset = ($page - 1) * $limit;
+
+// Count total for pagination
+$count_query = "SELECT COUNT(*) as total FROM news n WHERE 1=1";
+if ($search) {
+    $count_query .= " AND (n.title LIKE '%" . $conn->real_escape_string($search) . "%' OR n.content LIKE '%" . $conn->real_escape_string($search) . "%')";
+}
+$total_res = $conn->query($count_query);
+$total_items = $total_res ? $total_res->fetch_assoc()['total'] : 0;
+$total_pages = ceil($total_items / $limit);
 
 $query = "SELECT n.*, u.fullname as author_name FROM news n LEFT JOIN users u ON n.author_id = u.id WHERE 1=1";
 if ($search) {
     $query .= " AND (n.title LIKE '%" . $conn->real_escape_string($search) . "%' OR n.content LIKE '%" . $conn->real_escape_string($search) . "%')";
 }
-$query .= " ORDER BY n.id DESC";
+$query .= " ORDER BY n.id DESC LIMIT $limit OFFSET $offset";
 
 $news_res = $conn->query($query);
 if (!$news_res) {
@@ -17,7 +29,7 @@ if (!$news_res) {
 }
 
 $page_title = "Tin tức";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="bg-secondary py-16 text-white text-center">
@@ -65,6 +77,36 @@ include("includes/header.php");
                     </article>
                 <?php endwhile; ?>
             </div>
+
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+                <div class="mt-16 flex justify-center items-center gap-2">
+                    <?php 
+                    $params = $_GET;
+                    unset($params['page']);
+                    $base_url = "news.php?" . http_build_query($params);
+                    if (!empty($params)) $base_url .= "&";
+                    ?>
+
+                    <?php if ($page > 1): ?>
+                        <a href="<?= $base_url ?>page=<?= $page - 1 ?>" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="<?= $base_url ?>page=<?= $i ?>" class="w-12 h-12 flex items-center justify-center rounded-2xl transition-all <?= $i == $page ? 'bg-primary text-white font-bold shadow-lg shadow-primary/30' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <a href="<?= $base_url ?>page=<?= $page + 1 ?>" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         <?php else: ?>
             <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
                 <p class="text-slate-400">Không tìm thấy bài viết nào phù hợp.</p>
@@ -73,4 +115,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

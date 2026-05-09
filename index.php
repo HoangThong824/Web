@@ -31,10 +31,10 @@ include("includes/header.php");
             <?php echo getSetting($conn, 'homepage_content'); ?>
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="products.php" class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105">
+            <a href="pages/products/products.php" class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105">
                 Mua ngay
             </a>
-            <a href="contact.php" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-full font-bold text-lg transition-all">
+            <a href="pages/info/contact.php" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-8 py-4 rounded-full font-bold text-lg transition-all">
                 Liên hệ chúng tôi
             </a>
         </div>
@@ -49,7 +49,7 @@ include("includes/header.php");
                 <h2 class="text-4xl font-bold text-secondary mb-2">Sản phẩm nổi bật</h2>
                 <div class="w-20 h-1.5 bg-primary rounded-full"></div>
             </div>
-            <a href="products.php" class="text-primary font-bold hover:underline">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
+            <a href="pages/products/products.php" class="text-primary font-bold hover:underline">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -70,7 +70,7 @@ include("includes/header.php");
                     $review_count = $row['review_count'];
             ?>
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all group overflow-hidden border border-slate-100">
-                    <a href="product_detail.php?id=<?php echo $row['id']; ?>" class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center text-slate-400 text-4xl block">
+                    <a href="pages/products/product_detail.php?id=<?php echo $row['id']; ?>" class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center text-slate-400 text-4xl block">
                         <?php if($row['image'] && file_exists("uploads/".$row['image'])): ?>
                             <img src="uploads/<?= $row['image'] ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                         <?php else: ?>
@@ -82,7 +82,7 @@ include("includes/header.php");
                     </a>
                     <div class="p-6">
                         <span class="text-primary text-xs font-bold uppercase tracking-wider mb-2 block"><?php echo $row['category_name']; ?></span>
-                        <a href="product_detail.php?id=<?php echo $row['id']; ?>">
+                        <a href="pages/products/product_detail.php?id=<?php echo $row['id']; ?>">
                             <h3 class="text-lg font-bold text-secondary mb-1 hover:text-primary transition-colors"><?php echo $row['name']; ?></h3>
                         </a>
                         <div class="flex items-center gap-1 text-orange-400 text-xs mb-3">
@@ -133,7 +133,7 @@ include("includes/header.php");
                         <span class="font-bold text-secondary">Giao hàng nhanh</span>
                     </div>
                 </div>
-                <a href="about.php" class="inline-block bg-secondary text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition-all">
+                <a href="pages/info/about.php" class="inline-block bg-secondary text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition-all">
                     Tìm hiểu thêm
                 </a>
             </div>

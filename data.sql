@@ -148,7 +148,11 @@ INSERT INTO products (category_id, name, price, description, is_featured, image)
 (3, 'Khô Gà Lá Chanh', 150000, 'Khô gà xé cay giòn rụm, thơm nồng mùi lá chanh tươi.', TRUE, 'khô gà.png'),
 (3, 'Khô Bò Sợi', 450000, 'Khô bò sợi cao cấp, tẩm ướp gia vị đậm đà, cay cay ngọt ngọt.', FALSE, 'khô bò.png'),
 (4, 'Tôm Khô Đất', 650000, 'Tôm khô đất Cà Mau chính gốc, màu đỏ tự nhiên, vị ngọt thanh.', TRUE, 'tôm khô.png'),
-(5, 'Combo Tiết Kiệm', 1200000, 'Sự kết hợp hoàn hảo của các loại khô bán chạy nhất, tiết kiệm hơn khi mua lẻ.', TRUE, 'combo.png');
+(5, 'Combo Tiết Kiệm', 1200000, 'Sự kết hợp hoàn hảo của các loại khô bán chạy nhất, tiết kiệm hơn khi mua lẻ.', TRUE, 'combo.png'),
+(1, 'Khô Cá Sặc', 220000, 'Khô cá sặc rằn (sặc bổi) béo ngậy, thịt thơm, đặc sản nổi tiếng miền Tây.', FALSE, 'khô cá sặc.png'),
+(1, 'Khô Cá Chạch', 350000, 'Khô cá chạch đồng, món ăn dân dã nhưng cực kỳ đưa cơm, giàu dinh dưỡng.', FALSE, 'khô cá chạch.png'),
+(1, 'Khô Cá Dứa', 480000, 'Khô cá dứa 1 nắng cao cấp, thịt trắng, vị béo bùi đặc trưng.', FALSE, 'khô cá dứa.png'),
+(1, 'Khô Cá Lưỡi Trâu', 190000, 'Khô cá lưỡi trâu tẩm vị, giòn ngon, thích hợp làm món nhắm hoặc ăn với cơm.', FALSE, 'khô cá lưỡi trâu.png');
 
 INSERT INTO news (title, content) VALUES
 ('Cách chọn mực khô ngon', 'Làm sao để phân biệt mực khô chất lượng và mực giả? Hãy cùng tìm hiểu về độ dày của thịt, màu sắc và mùi thơm đặc trưng của mực thật...'),

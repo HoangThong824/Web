@@ -108,7 +108,7 @@
         </nav>
 
         <div class="p-6 mt-auto border-t border-slate-700/50">
-            <a href="../logout.php"
+            <a href="../pages/auth/logout.php"
                 class="flex items-center gap-4 px-6 py-4 rounded-xl text-red-400 hover:bg-red-500/10 transition-all">
                 <i class="fas fa-power-off"></i>
                 <span class="font-bold uppercase text-xs tracking-widest">Logout</span>

@@ -1,9 +1,9 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php?redirect=profile.php");
     exit();
 }
 
@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
         
         if (in_array($ext, $allowed)) {
             $new_name = "avatar_" . $user_id . "_" . time() . "." . $ext;
-            if (move_uploaded_file($_FILES['avatar']['tmp_name'], "uploads/" . $new_name)) {
+            if (move_uploaded_file($_FILES['avatar']['tmp_name'], "../../uploads/" . $new_name)) {
                 $avatar_name = $new_name;
             }
         }
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_profile'])) {
 }
 
 $page_title = "Cá nhân";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="py-20 bg-slate-50 min-h-screen">
@@ -62,7 +62,7 @@ include("includes/header.php");
                     <div class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white shadow-xl flex items-center justify-center bg-primary text-white text-5xl font-bold overflow-hidden relative group">
                         <?php 
                         $user = $_SESSION['user'];
-                        $avatar_path = "uploads/" . ($user['avatar'] ?? '');
+                        $avatar_path = "../../uploads/" . ($user['avatar'] ?? '');
                         $has_avatar = !empty($user['avatar']) && $user['avatar'] != 'default_avatar.png' && file_exists($avatar_path);
                         if ($has_avatar): ?>
                             <img src="<?= $avatar_path ?>" class="w-full h-full object-cover">
@@ -80,7 +80,7 @@ include("includes/header.php");
                         <a href="#settings" class="flex items-center gap-4 p-4 rounded-xl hover:bg-slate-50 text-stone-600 font-bold transition-all">
                             <i class="fas fa-user-cog w-6"></i> Cài đặt tài khoản
                         </a>
-                        <a href="logout.php" class="flex items-center gap-4 p-4 rounded-xl text-red-500 hover:bg-red-50 font-bold transition-all">
+                        <a href="../auth/logout.php" class="flex items-center gap-4 p-4 rounded-xl text-red-500 hover:bg-red-50 font-bold transition-all">
                             <i class="fas fa-sign-out-alt w-6"></i> Đăng xuất
                         </a>
                     </div>
@@ -192,21 +192,21 @@ include("includes/header.php");
                                         <div class="py-4 flex items-center justify-between">
                                             <div class="flex items-center gap-4">
                                                 <div class="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden">
-                                                    <?php if($item['image'] && file_exists("uploads/".$item['image'])): ?>
-                                                        <img src="uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
+                                                    <?php if($item['image'] && file_exists("../../uploads/".$item['image'])): ?>
+                                                        <img src="../../uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
                                                     <?php else: ?>
                                                         <div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fas fa-fish"></i></div>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div>
-                                                    <a href="product_detail.php?id=<?= $item['product_id'] ?>" class="font-bold text-secondary hover:text-primary transition-colors"><?= $item['name'] ?></a>
+                                                    <a href="../products/product_detail.php?id=<?= $item['product_id'] ?>" class="font-bold text-secondary hover:text-primary transition-colors"><?= $item['name'] ?></a>
                                                     <p class="text-xs text-slate-400">Số lượng: <?= $item['quantity'] ?></p>
                                                 </div>
                                             </div>
                                             <div class="text-right">
                                                 <p class="font-bold text-secondary"><?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?>đ</p>
                                                 <?php if($order['status'] == 'delivered'): ?>
-                                                    <a href="product_detail.php?id=<?= $item['product_id'] ?>#reviews" class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold hover:bg-primary hover:text-white transition-all">Đánh giá ngay</a>
+                                                    <a href="../products/product_detail.php?id=<?= $item['product_id'] ?>#reviews" class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold hover:bg-primary hover:text-white transition-all">Đánh giá ngay</a>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
@@ -245,7 +245,7 @@ include("includes/header.php");
                         <div class="bg-white p-12 rounded-3xl border border-dashed border-slate-200 text-center">
                             <i class="fas fa-shopping-basket text-5xl text-slate-200 mb-4 block"></i>
                             <p class="text-slate-400">Bạn chưa có đơn hàng nào.</p>
-                            <a href="products.php" class="text-primary font-bold hover:underline mt-4 inline-block">Đi mua sắm ngay</a>
+                            <a href="../products/products.php" class="text-primary font-bold hover:underline mt-4 inline-block">Đi mua sắm ngay</a>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -254,4 +254,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

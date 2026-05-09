@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 function getSetting($conn, $key) {
     $stmt = $conn->prepare("SELECT value FROM settings WHERE `key`=?");
@@ -12,7 +12,7 @@ function getSetting($conn, $key) {
 }
 
 $page_title = "Giới thiệu";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="bg-secondary py-16 text-white text-center">
@@ -52,4 +52,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

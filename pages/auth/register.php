@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 $error = "";
 $success = "";
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $page_title = "Đăng ký";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <div class="py-20 flex items-center justify-center min-h-[80vh]">
@@ -95,4 +95,4 @@ include("includes/header.php");
     </div>
 </div>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

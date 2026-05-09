@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 $success = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $page_title = "Liên hệ";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="bg-secondary py-16 text-white text-center">
@@ -94,4 +94,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

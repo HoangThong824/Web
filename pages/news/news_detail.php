@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 if (!isset($_GET['id'])) {
     header("Location: news.php");
@@ -17,14 +17,14 @@ if (!$news) {
 }
 
 $page_title = $news['title'];
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <article class="py-12 bg-slate-50 min-h-screen">
     <div class="container mx-auto px-4">
         <!-- Breadcrumb -->
         <nav class="flex text-sm text-slate-500 mb-8 max-w-4xl mx-auto">
-            <a href="index.php" class="hover:text-primary">Trang chủ</a>
+            <a href="../../index.php" class="hover:text-primary">Trang chủ</a>
             <span class="mx-2">/</span>
             <a href="news.php" class="hover:text-primary">Tin tức</a>
             <span class="mx-2">/</span>
@@ -77,4 +77,4 @@ include("includes/header.php");
     </div>
 </article>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

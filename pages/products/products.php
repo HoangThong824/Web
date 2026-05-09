@@ -1,10 +1,13 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 $category_id = isset($_GET['category']) ? $_GET['category'] : '';
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'latest';
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = 9;
+$offset = ($page - 1) * $limit;
 
 // Define sorting logic
 $order_by = "p.id DESC"; // Default
@@ -15,6 +18,18 @@ if ($sort == 'price_asc') {
 } elseif ($sort == 'name_asc') {
     $order_by = "p.name ASC";
 }
+
+// Count total items for pagination
+$count_query = "SELECT COUNT(*) as total FROM products p WHERE 1=1";
+if ($category_id) {
+    $count_query .= " AND p.category_id = " . intval($category_id);
+}
+if ($search) {
+    $count_query .= " AND (p.name LIKE '%" . $conn->real_escape_string($search) . "%' OR p.description LIKE '%" . $conn->real_escape_string($search) . "%')";
+}
+$total_res = $conn->query($count_query);
+$total_items = $total_res ? $total_res->fetch_assoc()['total'] : 0;
+$total_pages = ceil($total_items / $limit);
 
 $query = "SELECT p.*, c.name as category_name, 
           AVG(co.rating) as avg_rating, 
@@ -29,7 +44,7 @@ if ($category_id) {
 if ($search) {
     $query .= " AND (p.name LIKE '%" . $conn->real_escape_string($search) . "%' OR p.description LIKE '%" . $conn->real_escape_string($search) . "%')";
 }
-$query .= " GROUP BY p.id ORDER BY $order_by";
+$query .= " GROUP BY p.id ORDER BY $order_by LIMIT $limit OFFSET $offset";
 
 $products = $conn->query($query);
 if (!$products) {
@@ -37,12 +52,12 @@ if (!$products) {
 }
 
 $page_title = "Sản phẩm";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <!-- Shop Hero Banner -->
 <div class="relative w-full overflow-hidden mt-6">
-    <img src="image/banner.png" alt="Banner" class="w-full h-auto block">
+    <img src="../../uploads/banner.png" alt="Banner" class="w-full h-auto block">
     <!-- Fade-out Gradient Overlay -->
     <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-slate-50 to-transparent"></div>
 </div>
@@ -105,7 +120,7 @@ include("includes/header.php");
             <!-- Product Grid -->
             <div class="lg:w-3/4">
                 <div class="flex justify-between items-center mb-8">
-                    <p class="text-slate-500">Hiển thị <span class="font-bold text-secondary"><?= $products->num_rows ?></span> sản phẩm</p>
+                    <p class="text-slate-500">Hiển thị <span class="font-bold text-secondary"><?= $products->num_rows ?></span> trên <span class="font-bold text-secondary"><?= $total_items ?></span> sản phẩm</p>
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-slate-500">Sắp xếp:</span>
                         <select id="sort-select" class="bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm outline-none cursor-pointer hover:border-primary transition-all">
@@ -130,8 +145,8 @@ include("includes/header.php");
                         <?php while($row = $products->fetch_assoc()): ?>
                             <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all group overflow-hidden border border-slate-100">
                                 <a href="product_detail.php?id=<?= $row['id'] ?>" class="h-56 bg-slate-50 relative overflow-hidden flex items-center justify-center text-slate-400 text-4xl block">
-                                    <?php if($row['image'] && file_exists("uploads/".$row['image'])): ?>
-                                        <img src="uploads/<?= $row['image'] ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <?php if($row['image'] && file_exists("../../uploads/".$row['image'])): ?>
+                                        <img src="../../uploads/<?= $row['image'] ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                     <?php else: ?>
                                         <i class="fas fa-fish group-hover:scale-125 transition-transform duration-500"></i>
                                     <?php endif; ?>
@@ -162,6 +177,37 @@ include("includes/header.php");
                             </div>
                         <?php endwhile; ?>
                     </div>
+
+                    <!-- Pagination -->
+                    <?php if ($total_pages > 1): ?>
+                        <div class="mt-12 flex justify-center items-center gap-2">
+                            <?php 
+                            // Build base URL for pagination
+                            $params = $_GET;
+                            unset($params['page']);
+                            $base_url = "products.php?" . http_build_query($params);
+                            if (!empty($params)) $base_url .= "&";
+                            ?>
+
+                            <?php if ($page > 1): ?>
+                                <a href="<?= $base_url ?>page=<?= $page - 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <a href="<?= $base_url ?>page=<?= $i ?>" class="w-10 h-10 flex items-center justify-center rounded-xl transition-all <?= $i == $page ? 'bg-primary text-white font-bold shadow-lg shadow-primary/30' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' ?>">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <a href="<?= $base_url ?>page=<?= $page + 1 ?>" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 <?php else: ?>
                     <div class="bg-white p-20 rounded-3xl text-center border-2 border-dashed border-slate-200">
                         <div class="text-slate-300 text-6xl mb-6"><i class="fas fa-search"></i></div>
@@ -174,4 +220,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

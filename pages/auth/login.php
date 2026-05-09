@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 $error = "";
 
@@ -19,9 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['user'] = $userData;
         
         if ($userData['role'] == 'admin') {
-            header("Location: admin/dashboard.php");
+            header("Location: ../../admin/dashboard.php");
         } else {
-            header("Location: index.php");
+            header("Location: ../../index.php");
         }
         exit();
     } else {
@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $page_title = "Đăng nhập";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <div class="py-20 flex items-center justify-center min-h-[70vh]">
@@ -78,4 +78,4 @@ include("includes/header.php");
     </div>
 </div>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

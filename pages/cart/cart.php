@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 // Handle Actions (Remove, Update)
 if (isset($_GET['action'])) {
@@ -22,7 +22,7 @@ if (isset($_GET['action'])) {
 }
 
 $page_title = "Giỏ hàng";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="bg-secondary py-16 text-white text-center">
@@ -60,8 +60,8 @@ include("includes/header.php");
                                         <td class="px-8 py-6">
                                             <div class="flex items-center gap-4">
                                                 <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-100">
-                                                    <?php if(isset($item['image']) && file_exists("uploads/".$item['image'])): ?>
-                                                        <img src="uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
+                                                    <?php if(isset($item['image']) && file_exists("../../uploads/".$item['image'])): ?>
+                                                        <img src="../../uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
                                                     <?php else: ?>
                                                         <i class="fas fa-fish"></i>
                                                     <?php endif; ?>
@@ -88,7 +88,7 @@ include("includes/header.php");
                             </tbody>
                         </table>
                         <div class="p-8 bg-slate-50 flex justify-between items-center border-t border-slate-100">
-                            <a href="products.php" class="text-secondary font-bold hover:text-primary flex items-center gap-2">
+                            <a href="../products/products.php" class="text-secondary font-bold hover:text-primary flex items-center gap-2">
                                 <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
                             </a>
                             <a href="cart.php?action=clear" class="text-red-500 font-bold hover:underline" onclick="return confirm('Xóa toàn bộ giỏ hàng?')">Xóa toàn bộ</a>
@@ -128,7 +128,7 @@ include("includes/header.php");
                 <div class="text-slate-200 text-9xl mb-8"><i class="fas fa-shopping-basket"></i></div>
                 <h2 class="text-3xl font-bold text-secondary mb-4">Giỏ hàng trống</h2>
                 <p class="text-slate-500 mb-10">Bạn chưa chọn sản phẩm nào để thưởng thức.</p>
-                <a href="products.php" class="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold transition-all inline-block shadow-lg shadow-primary/30 transform hover:-translate-y-1">
+                <a href="../products/products.php" class="bg-primary hover:bg-primary-dark text-white px-10 py-4 rounded-xl font-bold transition-all inline-block shadow-lg shadow-primary/30 transform hover:-translate-y-1">
                     Đi mua sắm ngay
                 </a>
             </div>
@@ -147,4 +147,4 @@ function updateQty(id, amt) {
 }
 </script>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

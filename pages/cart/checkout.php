@@ -1,9 +1,9 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 if (!isset($_SESSION['user'])) {
-    header("Location: login.php?redirect=checkout.php");
+    header("Location: ../auth/login.php?redirect=checkout.php");
     exit();
 }
 
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $page_title = "Thanh toán";
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <section class="py-20 bg-slate-50">
@@ -70,8 +70,8 @@ include("includes/header.php");
                 <h2 class="text-3xl font-bold text-secondary mb-4">Cảm ơn bạn!</h2>
                 <p class="text-slate-600 mb-10"><?= $success_msg ?></p>
                 <div class="flex flex-col gap-4">
-                    <a href="index.php" class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/30">Quay lại trang chủ</a>
-                    <a href="profile.php" class="text-slate-400 hover:text-secondary font-bold">Xem lịch sử đơn hàng</a>
+                    <a href="../../index.php" class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/30">Quay lại trang chủ</a>
+                    <a href="../auth/profile.php" class="text-slate-400 hover:text-secondary font-bold">Xem lịch sử đơn hàng</a>
                 </div>
             </div>
         <?php else: ?>
@@ -146,8 +146,8 @@ include("includes/header.php");
                             ?>
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 rounded-lg bg-slate-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-100">
-                                        <?php if($item['image'] && file_exists("uploads/".$item['image'])): ?>
-                                            <img src="uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
+                                        <?php if($item['image'] && file_exists("../../uploads/".$item['image'])): ?>
+                                            <img src="../../uploads/<?= $item['image'] ?>" class="w-full h-full object-cover">
                                         <?php else: ?>
                                             <i class="fas fa-fish text-xs text-slate-300"></i>
                                         <?php endif; ?>
@@ -182,4 +182,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

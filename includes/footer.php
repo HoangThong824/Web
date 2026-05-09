@@ -11,13 +11,13 @@
             <div>
                 <h4 class="text-xl font-bold mb-6 text-white">Liên kết</h4>
                 <ul class="space-y-4 text-stone-400">
-                    <li><a href="index.php"
+                    <li><a href="<?= $base_path ?>index.php"
                             class="hover:text-primary hover:translate-x-1 inline-block transition-all">Trang chủ</a></li>
-                    <li><a href="products.php"
+                    <li><a href="<?= $base_path ?>pages/products/products.php"
                             class="hover:text-primary hover:translate-x-1 inline-block transition-all">Sản phẩm</a></li>
-                    <li><a href="news.php" class="hover:text-primary hover:translate-x-1 inline-block transition-all">Tin
+                    <li><a href="<?= $base_path ?>pages/news/news.php" class="hover:text-primary hover:translate-x-1 inline-block transition-all">Tin
                             tức</a></li>
-                    <li><a href="contact.php"
+                    <li><a href="<?= $base_path ?>pages/info/contact.php"
                             class="hover:text-primary hover:translate-x-1 inline-block transition-all">Liên hệ</a></li>
                 </ul>
             </div>
@@ -52,7 +52,7 @@
     </div>
 </footer>
 
-<script src="assets/main.js"></script>
+<script src="<?= $base_path ?>assets/main.js"></script>
 </body>
 
 </html>

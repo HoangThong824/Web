@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("includes/db.php");
+include("../../includes/db.php");
 
 if (!isset($_GET['id'])) {
     header("Location: products.php");
@@ -57,12 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit_comment'])) {
 }
 
 $page_title = $product['name'];
-include("includes/header.php");
+include("../../includes/header.php");
 ?>
 
 <!-- Product Detail Hero Banner -->
 <div class="relative w-full overflow-hidden mt-6">
-    <img src="image/banner.png" alt="Banner" class="w-full h-auto block">
+    <img src="../../uploads/banner.png" alt="Banner" class="w-full h-auto block">
     <!-- Fade-out Gradient Overlay -->
     <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-slate-50 to-transparent"></div>
 </div>
@@ -71,7 +71,7 @@ include("includes/header.php");
     <div class="container mx-auto px-4">
         <!-- Breadcrumb -->
         <nav class="flex text-sm text-slate-500 mb-8">
-            <a href="index.php" class="hover:text-primary">Trang chủ</a>
+            <a href="../../index.php" class="hover:text-primary">Trang chủ</a>
             <span class="mx-2">/</span>
             <a href="products.php" class="hover:text-primary">Sản phẩm</a>
             <span class="mx-2">/</span>
@@ -82,8 +82,8 @@ include("includes/header.php");
             <div class="flex flex-col lg:flex-row">
                 <!-- Product Image -->
                 <div class="lg:w-1/2 bg-slate-50 flex items-center justify-center p-8 md:p-12 text-slate-300 text-9xl overflow-hidden">
-                    <?php if($product['image'] && file_exists("uploads/".$product['image'])): ?>
-                        <img src="uploads/<?= $product['image'] ?>" class="w-full h-full object-contain hover:scale-105 transition-transform duration-700">
+                    <?php if($product['image'] && file_exists("../../uploads/".$product['image'])): ?>
+                        <img src="../../uploads/<?= $product['image'] ?>" class="w-full h-full object-contain hover:scale-105 transition-transform duration-700">
                     <?php else: ?>
                         <i class="fas fa-fish"></i>
 <?php endif; ?>
@@ -178,7 +178,7 @@ include("includes/header.php");
                 <?php if(!isset($_SESSION['user'])): ?>
                     <div class="text-center py-6">
                         <p class="text-slate-500 mb-4">Bạn cần đăng nhập để đánh giá sản phẩm này.</p>
-                        <a href="login.php" class="bg-primary text-white px-6 py-2 rounded-lg font-bold">Đăng nhập ngay</a>
+                        <a href="../auth/login.php" class="bg-primary text-white px-6 py-2 rounded-lg font-bold">Đăng nhập ngay</a>
                     </div>
                 <?php elseif(!$can_review): ?>
                     <div class="flex items-center gap-4 text-orange-600 bg-orange-50 p-4 rounded-xl border border-orange-100">
@@ -260,4 +260,4 @@ include("includes/header.php");
     </div>
 </section>
 
-<?php include("includes/footer.php"); ?>
+<?php include("../../includes/footer.php"); ?>

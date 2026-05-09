@@ -15,6 +15,15 @@ if ($action == 'delete' && isset($_GET['id'])) {
     $action = 'list';
 }
 
+// --- Pagination Logic ---
+$limit = 10;
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($page - 1) * $limit;
+
+$total_res = $conn->query("SELECT COUNT(*) as total FROM faqs");
+$total_items = $total_res->fetch_assoc()['total'];
+$total_pages = ceil($total_items / $limit);
+
 // Handle Add/Edit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $question = $_POST['question'];
@@ -64,7 +73,7 @@ include("header.php");
 <?php if($action == 'list'): ?>
     <div class="space-y-4">
         <?php
-        $res = $conn->query("SELECT * FROM faqs ORDER BY id DESC");
+        $res = $conn->query("SELECT * FROM faqs ORDER BY id DESC LIMIT $limit OFFSET $offset");
         if($res->num_rows > 0):
             while($row = $res->fetch_assoc()):
         ?>
@@ -82,7 +91,19 @@ include("header.php");
                     </a>
                 </div>
             </div>
-        <?php endwhile; else: ?>
+            <?php endwhile; ?>
+            
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+                <div class="mt-8 flex justify-center gap-2">
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a href="faqs.php?page=<?= $i ?>" class="w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all <?= $i == $page ? 'bg-primary text-white shadow-lg' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
             <p class="text-center py-20 text-slate-400 bg-white rounded-2xl border border-dashed">Chưa có câu hỏi nào.</p>
         <?php endif; ?>
     </div>
