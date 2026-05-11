@@ -24,6 +24,7 @@
             <div>
                 <h4 class="text-xl font-bold mb-6 text-white">Thông tin liên hệ</h4>
                 <ul class="space-y-4 text-stone-400">
+<<<<<<< HEAD
                     <li class="flex items-start gap-3">
                         <i class="fas fa-map-marker-alt mt-1 text-primary"></i>
                         <?= getSetting($conn, 'address') ?>
@@ -36,6 +37,13 @@
                         <i class="fas fa-envelope text-primary"></i>
                         <?= getSetting($conn, 'email') ?>
                     </li>
+=======
+                    <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 text-primary"></i> 123 Đường
+                        ABC, Quận 1, TP. HCM</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-phone text-primary"></i> 0988 123 456</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-envelope text-primary"></i>
+                        contact@khodacsan.com</li>
+>>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
                 </ul>
             </div>
             <div>

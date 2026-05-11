@@ -11,6 +11,7 @@ if ($conn->connect_error) {
 }
 
 $conn->set_charset("utf8");
+<<<<<<< HEAD
 ?>
 
 <?php
@@ -26,4 +27,6 @@ if (!function_exists('getSetting')) {
         return $row['value'] ?? '';
     }
 }
+=======
+>>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
 ?>
