@@ -17,19 +17,11 @@ include("includes/header.php");
 
 <!-- Hero Section -->
 <section class="relative h-[80vh] flex items-center justify-center bg-secondary overflow-hidden">
-<<<<<<< HEAD
     <!-- Background Image -->
      <div class="absolute inset-0 z-0">
         <img src="uploads/banner.png" class="w-full h-full object-cover" alt="Banner">
     </div>
     <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 z-10"></div>
-=======
-    <!-- Placeholder for Background Image -->
-    <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 z-10"></div>
-    <div class="absolute inset-0 bg-slate-800 flex items-center justify-center text-slate-700 text-6xl opacity-20">
-        <i class="fas fa-image"></i>
-    </div>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
     
     <div class="container mx-auto px-4 relative z-20 text-center text-white">
         <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -116,13 +108,8 @@ include("includes/header.php");
 <section class="py-20 bg-slate-50">
     <div class="container mx-auto px-4">
         <div class="flex flex-col lg:flex-row items-center gap-16">
-<<<<<<< HEAD
             <div class="lg:w-1/2 w-full h-[400px] rounded-3x1 overflow-hidden relative">
                 <img src="uploads/combo.png" alt="" class="w-full h-full object-cover">
-=======
-            <div class="lg:w-1/2 bg-slate-200 h-[400px] w-full rounded-3xl flex items-center justify-center text-slate-400 text-6xl">
-                <i class="fas fa-store"></i>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
             </div>
             <div class="lg:w-1/2">
                 <span class="text-primary font-bold uppercase tracking-widest mb-4 block">Về chúng tôi</span>
