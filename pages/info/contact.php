@@ -21,11 +21,7 @@ include("../../includes/header.php");
 
 <section class="bg-secondary py-16 text-white text-center">
     <div class="container mx-auto px-4">
-<<<<<<< HEAD
         <h1 class="text-4xl md:text-5xl font-bold mb-4">Trang liên hệ</h1>
-=======
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Liên hệ</h1>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
         <p class="text-slate-300">Chúng tôi luôn sẵn sàng lắng nghe ý kiến từ bạn.</p>
     </div>
 </section>
@@ -42,11 +38,7 @@ include("../../includes/header.php");
                         </div>
                         <div>
                             <h4 class="font-bold text-secondary mb-1">Địa chỉ</h4>
-<<<<<<< HEAD
                             <p class="text-slate-500"><?= $settings['address'] ?? 'Chưa cập nhật' ?></p>
-=======
-                            <p class="text-slate-500">123 Đường ABC, Quận 1, TP. HCM</p>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
                         </div>
                     </div>
                     <div class="flex items-start gap-6">
@@ -55,11 +47,7 @@ include("../../includes/header.php");
                         </div>
                         <div>
                             <h4 class="font-bold text-secondary mb-1">Điện thoại</h4>
-<<<<<<< HEAD
                             <p class="text-slate-500"><?= $settings['phone'] ?? 'Chưa cập nhật' ?></p>
-=======
-                            <p class="text-slate-500">0988 123 456</p>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
                         </div>
                     </div>
                     <div class="flex items-start gap-6">
@@ -68,11 +56,7 @@ include("../../includes/header.php");
                         </div>
                         <div>
                             <h4 class="font-bold text-secondary mb-1">Email</h4>
-<<<<<<< HEAD
                             <p class="text-slate-500"><?= $settings['email'] ?? 'Chưa cập nhật' ?></p>
-=======
-                            <p class="text-slate-500">contact@khodacsan.com</p>
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
                         </div>
                     </div>
                 </div>

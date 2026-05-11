@@ -105,15 +105,12 @@
                 <i class="fas fa-user-friends text-lg"></i>
                 <span class="font-medium">Thành viên</span>
             </a>
-<<<<<<< HEAD
 
             <a href="settings.php"
                 class="sidebar-link flex items-center gap-4 px-6 py-4 rounded-xl hover:text-white transition-all <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
                 <i class="fas fa-cog text-lg"></i>
                 <span class="font-medium">Cài đặt</span>
             </a>
-=======
->>>>>>> 1c21ba5d9022a28c136ad0da4664c1d80d4c894b
         </nav>
 
         <div class="p-6 mt-auto border-t border-slate-700/50">
