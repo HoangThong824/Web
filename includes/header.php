@@ -106,7 +106,7 @@ if (strpos($current_path, '/pages/') !== false) {
                         $avatar_path = $base_path . "uploads/" . ($user['avatar'] ?? '');
                         $has_avatar = !empty($user['avatar']) && $user['avatar'] != 'default_avatar.png' && file_exists($avatar_path);
                         ?>
-                        <div class="flex items-center gap-3">
+                        <div class="hidden sm:flex items-center gap-3">
                             <a href="<?= $base_path . ($user['role'] == 'admin' ? 'admin/dashboard.php' : 'pages/auth/profile.php'); ?>"
                                 class="flex items-center bg-secondary/5 hover:bg-secondary/10 p-1 rounded-full transition-all group">
                                 <div
@@ -126,12 +126,18 @@ if (strpos($current_path, '/pages/') !== false) {
                             class="hidden sm:inline-block px-4 py-2 rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary hover:text-white transition-all text-sm">Đăng
                             nhập</a>
                         <a href="<?= $base_path ?>pages/auth/register.php"
-                            class="bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-all text-sm shadow-lg shadow-primary/20">Đăng
+                            class="hidden sm:inline-block bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-all text-sm shadow-lg shadow-primary/20">Đăng
                             ký</a>
                     <?php endif; ?>
+
+                    <!-- Hamburger Button -->
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu(true)" class="lg:hidden text-secondary hover:text-primary transition-colors p-2 text-2xl focus:outline-none cursor-pointer relative z-50">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
             </nav>
         </div>
+
     </header>
 
     <!-- Toast Notification -->

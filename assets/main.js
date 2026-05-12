@@ -1,18 +1,19 @@
-// Simple Carousel Interactivity
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Khô Đặc Sản JS Loaded');
-    
+
     // Add scroll effect to header
     const header = document.querySelector('header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.padding = '10px 0';
-            header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-        } else {
-            header.style.padding = '15px 0';
-            header.style.backgroundColor = '#fff';
-        }
-    });
+    if (header) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.style.padding = '10px 0';
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            } else {
+                header.style.padding = '15px 0';
+                header.style.backgroundColor = '#fff';
+            }
+        });
+    }
 
     // Client-side form validation helper
     const forms = document.querySelectorAll('form[data-validate]');
