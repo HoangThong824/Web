@@ -1,0 +1,89 @@
+# Website Khô Đặc Sản - Hướng Dẫn Thực Hiện Dự Án 🐟
+
+Website thương mại điện tử chuyên cung cấp các loại khô đặc sản vùng miền, xây dựng trên nền tảng PHP thuần và MySQL. Tài liệu này hướng dẫn chi tiết các thành viên trong nhóm về cấu trúc file, luồng hoạt động và cách thức hoàn thiện dự án.
+
+---
+
+## 🚀 1. Công Nghệ & Thiết Lập
+*   **Backend**: PHP 7.4+ (Sử dụng MySQLi & Prepared Statements).
+*   **Frontend**: Tailwind CSS (Styling), Font Awesome 6 (Icons).
+*   **Cơ sở dữ liệu**: MySQL (Import file `data.sql`).
+*   **Tài khoản Admin**: `admin` / `123456`.
+
+---
+
+## 📂 2. Mô Tả Các File Chức Năng
+
+### 🌐 Trang Phía Người Dùng (Frontend)
+- `index.php`: Trang chủ hiển thị banner, danh mục nổi bật và các sản phẩm HOT.
+- `products.php`: Trang danh sách sản phẩm tích hợp bộ lọc theo loại và thanh tìm kiếm từ khóa.
+- `product_detail.php`: Hiển thị chi tiết sản phẩm, giá tiền theo đơn vị và hệ thống đánh giá sao tương tác.
+- `about.php` & `faq.php`: Giới thiệu về cửa hàng và giải đáp các câu hỏi thường gặp.
+- `contact.php`: Form liên hệ dành cho khách hàng.
+- `cart.php`: Quản lý giỏ hàng (Cập nhật số lượng, xóa sản phẩm).
+- `checkout.php`: Trang thanh toán và lưu thông tin đơn hàng vào cơ sở dữ liệu.
+- `profile.php`: Trang cá nhân quản lý lịch sử mua hàng và thực hiện đánh giá sản phẩm.
+- `news.php` & `news_detail.php`: Hệ thống tin tức và xem nội dung bài viết.
+
+### ⚙️ Trang Quản Trị (Admin Panel - Thư mục `/admin`)
+- `admin/dashboard.php`: Thống kê tổng quan (Đơn hàng mới, Tổng doanh thu, Liên hệ chờ đọc).
+- `admin/products.php`: Quản lý danh sách sản phẩm (Thêm mới, sửa thông tin, xóa).
+- `admin/orders.php`: Quản lý đơn hàng và cập nhật trạng thái vận chuyển.
+- `admin/comments.php`: Kiểm duyệt bình luận và đánh giá từ khách hàng.
+- `admin/categories.php`: Quản lý các danh mục sản phẩm (Khô cá, Khô mực, Khô thịt...).
+- `admin/settings.php`: Cấu hình hệ thống (Thay đổi SĐT, Địa chỉ, Logo, Nội dung giới thiệu).
+- `admin/contacts.php`: Quản lý các lời nhắn từ trang Liên hệ.
+
+---
+
+## 🔄 3. Luồng Hoạt Động Của Các Tính Năng
+
+### A. Luồng Mua Hàng & Thanh Toán
+1.  **Tìm kiếm**: Người dùng sử dụng thanh tìm kiếm trên Header hoặc lọc theo Category tại `products.php`.
+2.  **Giỏ hàng**: Nhấn "Thêm vào giỏ", dữ liệu được lưu vào `$_SESSION['cart']` thông qua file `add_to_cart.php`.
+3.  **Đặt hàng**: Tại `checkout.php`, khi nhấn "Đặt hàng", hệ thống sẽ:
+    - Lưu thông tin vào bảng `orders`.
+    - Lưu chi tiết từng sản phẩm vào bảng `order_items`.
+    - Xóa sạch giỏ hàng trong session.
+
+### B. Luồng Đánh Giá Xác Thực (Verified Purchase)
+1.  **Điều kiện**: Chỉ người dùng đã mua sản phẩm và đơn hàng có trạng thái là **"delivered"** (Đã giao) mới thấy nút đánh giá trong `profile.php`.
+2.  **Thực hiện**: Người dùng gửi đánh giá tại `product_detail.php#reviews`.
+3.  **Cập nhật**: Dữ liệu lưu vào bảng `comments`. Hệ thống sẽ tự động tính lại điểm trung bình (`AVG(rating)`) và hiển thị số sao mới nhất trên toàn website.
+
+### C. Luồng Quản Trị Hệ Thống
+1.  **Đăng nhập**: Admin đăng nhập qua `login.php`.
+2.  **Cập nhật dữ liệu**: Admin thay đổi giá sản phẩm hoặc trạng thái đơn hàng.
+3.  **Đồng bộ**: Các thay đổi này sẽ tác động trực tiếp đến bảng database tương ứng và hiển thị ngay lập tức ở phía người dùng.
+---
+
+## 🔍 Giải Thích Mã Nguồn
+
+### A. Kiến trúc kết nối Cơ sở dữ liệu
+Hệ thống sử dụng một file cấu hình trung tâm tại `includes/db.php`. Mọi file chức năng đều `include` file này để khởi tạo biến `$conn` (đối tượng MySQLi).
+*   **Lợi ích**: Dễ dàng thay đổi thông tin Database (Host, User, Pass) tại một nơi duy nhất khi triển khai lên hosting.
+
+### B. Cơ chế xác thực & Bảo mật (Authentication)
+*   **Session-based**: Sử dụng `session_start()` để lưu trữ thông tin đăng nhập của người dùng (`$_SESSION['user']`).
+*   **Phân quyền (RBAC)**: Trong thư mục `/admin`, các file đều gọi hàm `checkAdmin()` từ `includes/auth.php`. Hàm này kiểm tra nếu `role` của user không phải 'admin', hệ thống sẽ lập tức điều hướng về trang chủ.
+*   **SQL Injection Protection**: Sử dụng `prepare()` và `bind_param()` cho các truy vấn nhạy cảm (như Đăng nhập, Đặt hàng, Đánh giá) để ngăn chặn các cuộc tấn công tiêm nhiễm mã độc.
+
+### C. Logic Giỏ hàng (Cart Logic)
+Giỏ hàng không lưu vào Database ngay lập tức mà được lưu trong `$_SESSION['cart']`.
+*   **Cấu trúc**: Là một mảng đa chiều, trong đó mỗi phần tử chứa `id`, `name`, `price`, `image`, và `qty` (số lượng).
+*   **Lý do**: Tối ưu tốc độ phản hồi, giảm tải cho Database khi người dùng chỉ đang xem và thêm/bớt sản phẩm.
+
+### D. Hệ thống Đánh giá Động
+Tính năng này kết hợp giữa SQL Aggregate Functions và JavaScript:
+*   **SQL**: Sử dụng `AVG(rating)` để tính điểm trung bình và `COUNT(id)` để đếm lượt đánh giá trong cùng một câu lệnh `SELECT`.
+*   **JavaScript**: Tại file `product_detail.php`, sử dụng JS để xử lý việc "bôi màu" các ngôi sao khi người dùng click, mang lại trải nghiệm mượt mà không cần tải lại trang.
+
+---
+
+## 🤝 Hướng Dẫn Dành Cho Team
+- **Database**: Luôn kiểm tra file `data.sql` trước khi cập nhật cấu trúc bảng mới.
+- **Git**: Thực hiện `git pull` hàng ngày để tránh xung đột mã nguồn.
+- **Code Style**: Sử dụng Tailwind CSS để giữ giao diện đồng nhất theo phong cách "Quiet Luxury".
+
+---
+*Dự án được phát triển cho mục đích học tập và thực hành Web PHP.*
